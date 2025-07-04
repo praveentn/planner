@@ -38,7 +38,7 @@ app.include_router(tasks.router, prefix="/api/tasks", tags=["tasks"])
 app.include_router(timer.router, prefix="/api/timer", tags=["timer"])
 app.include_router(ai.router, prefix="/api/ai", tags=["ai"])
 app.include_router(feeds.router, prefix="/api/feeds", tags=["feeds"])
-app.include_router(user_settings.settings_router, prefix="/api/user_settings", tags=["user_settings"])
+app.include_router(user_settings.settings_router, prefix="/api/settings", tags=["settings"])
 
 @app.get("/")
 async def root():
