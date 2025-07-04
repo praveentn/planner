@@ -20,11 +20,19 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token'))
 
   useEffect(() => {
-    if (token) {
-      verifyToken()
-    } else {
+    const initAuth = async () => {
+      if (token) {
+        try {
+          await verifyToken()
+        } catch (error) {
+          console.log('Token verification failed, clearing token')
+          logout()
+        }
+      }
       setLoading(false)
     }
+
+    initAuth()
   }, [token])
 
   const verifyToken = async () => {
@@ -39,9 +47,8 @@ export const AuthProvider = ({ children }) => {
       }
     } catch (error) {
       console.error('Token verification failed:', error)
-      logout()
-    } finally {
-      setLoading(false)
+      // Don't show error toast during initial load
+      throw error
     }
   }
 
@@ -54,13 +61,32 @@ export const AuthProvider = ({ children }) => {
       setToken(access_token)
       
       // Get user profile
-      const userResponse = await authAPI.getProfile()
-      setUser(userResponse.data)
+      try {
+        const userResponse = await authAPI.getProfile()
+        setUser(userResponse.data)
+      } catch (profileError) {
+        // If profile fetch fails, create a basic user object
+        setUser({
+          email: email,
+          username: email.split('@')[0],
+          full_name: email.split('@')[0]
+        })
+      }
       
       toast.success('Welcome back!')
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.detail || 'Login failed'
+      console.error('Login error:', error)
+      let message = 'Login failed'
+      
+      if (error.response?.status === 401) {
+        message = 'Invalid email or password'
+      } else if (error.response?.data?.detail) {
+        message = error.response.data.detail
+      } else if (error.code === 'ECONNREFUSED' || !error.response) {
+        message = 'Cannot connect to server. Please check if the backend is running.'
+      }
+      
       toast.error(message)
       return { success: false, error: message }
     }
@@ -72,7 +98,15 @@ export const AuthProvider = ({ children }) => {
       toast.success('Account created successfully! Please log in.')
       return { success: true }
     } catch (error) {
-      const message = error.response?.data?.detail || 'Registration failed'
+      console.error('Registration error:', error)
+      let message = 'Registration failed'
+      
+      if (error.response?.data?.detail) {
+        message = error.response.data.detail
+      } else if (error.code === 'ECONNREFUSED' || !error.response) {
+        message = 'Cannot connect to server. Please check if the backend is running.'
+      }
+      
       toast.error(message)
       return { success: false, error: message }
     }

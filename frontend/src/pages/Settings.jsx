@@ -10,7 +10,7 @@ import {
   Palette, 
   Clock, 
   Brain,
-  Widgets,
+  LayoutDashboard as Widgets,
   Globe
 } from 'lucide-react'
 import toast from 'react-hot-toast'

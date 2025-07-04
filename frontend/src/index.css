@@ -12,6 +12,16 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+  
+  /* Add missing color definitions */
+  :root {
+    --primary-50: #f0f9ff;
+    --primary-100: #e0f2fe;
+    --primary-500: #0ea5e9;
+    --primary-600: #0284c7;
+    --primary-700: #0369a1;
+    --primary-900: #0c4a6e;
+  }
 }
 
 @layer components {
@@ -20,7 +30,7 @@
   }
   
   .btn-primary {
-    @apply bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
   }
   
   .btn-secondary {
@@ -28,7 +38,7 @@
   }
   
   .input-field {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500;
+    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 dark:placeholder-gray-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
   }
   
   .task-item {
@@ -38,6 +48,25 @@
   .timer-display {
     @apply text-4xl font-mono font-bold text-gray-900 dark:text-gray-100;
   }
+  
+  /* Fix primary colors */
+  .bg-primary-50 { background-color: #f0f9ff; }
+  .bg-primary-100 { background-color: #e0f2fe; }
+  .bg-primary-500 { background-color: #0ea5e9; }
+  .bg-primary-600 { background-color: #0284c7; }
+  .bg-primary-700 { background-color: #0369a1; }
+  .bg-primary-900 { background-color: #0c4a6e; }
+  
+  .text-primary-200 { color: #bae6fd; }
+  .text-primary-500 { color: #0ea5e9; }
+  .text-primary-600 { color: #0284c7; }
+  .text-primary-700 { color: #0369a1; }
+  
+  .border-primary-500 { border-color: #0ea5e9; }
+  .ring-primary-500 { --tw-ring-color: #0ea5e9; }
+  
+  .hover\:bg-primary-700:hover { background-color: #0369a1; }
+  .focus\:ring-primary-500:focus { --tw-ring-color: #0ea5e9; }
 }
 
 @layer utilities {
@@ -64,10 +93,18 @@
     border: 1px solid rgba(75, 85, 99, 0.3);
   }
 
-  .bg-background { background-color: #F9FAFB; 
+  .bg-background { 
+    background-color: #F9FAFB; 
   }
   .text-foreground {
     color: #111827;
+  }
+  
+  .dark .bg-background {
+    background-color: #111827;
+  }
+  .dark .text-foreground {
+    color: #F9FAFB;
   }
 }
 

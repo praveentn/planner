@@ -62,7 +62,7 @@ const Navbar = () => {
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
               <Link to="/" className="flex items-center">
-                <div className="h-8 w-8 bg-primary-600 rounded-lg flex items-center justify-center">
+                <div className="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold text-sm">E</span>
                 </div>
                 <span className="ml-2 text-xl font-bold text-gray-900 dark:text-white">
@@ -81,7 +81,7 @@ const Navbar = () => {
                     to={item.href}
                     className={`inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2 ${
                       isActive
-                        ? 'border-primary-500 text-gray-900 dark:text-white'
+                        ? 'border-blue-500 text-blue-700 dark:text-blue-200'
                         : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300'
                     }`}
                   >
@@ -98,7 +98,7 @@ const Navbar = () => {
             {/* Dark mode toggle */}
             <button
               onClick={toggleDarkMode}
-              className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md"
+              className="p-2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
             >
               {isDarkMode ? (
                 <Sun className="h-5 w-5" />
@@ -109,13 +109,16 @@ const Navbar = () => {
 
             {/* User menu */}
             <div className="hidden md:flex md:items-center md:space-x-4">
-              <span className="text-sm text-gray-700 dark:text-gray-300">
-                {user?.full_name || user?.username}
-              </span>
+              <div className="flex items-center space-x-2">
+                <User className="h-5 w-5 text-gray-400" />
+                <span className="text-sm text-gray-700 dark:text-gray-300">
+                  {user?.full_name || user?.username || 'User'}
+                </span>
+              </div>
               
               <button
                 onClick={handleLogout}
-                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 rounded-md"
+                className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-md"
               >
                 <LogOut className="h-4 w-4 mr-2" />
                 Logout
@@ -126,7 +129,7 @@ const Navbar = () => {
             <div className="md:hidden">
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500"
+                className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-500"
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -152,9 +155,9 @@ const Navbar = () => {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={`block pl-3 pr-4 py-2 text-base font-medium ${
                     isActive
-                      ? 'bg-primary-50 dark:bg-primary-900 border-primary-500 text-primary-700 dark:text-primary-200'
+                      ? 'bg-blue-50 dark:bg-blue-900 border-blue-500 text-blue-700 dark:text-blue-200'
                       : 'text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700'
-                  } border-l-4 ${isActive ? 'border-primary-500' : 'border-transparent'}`}
+                  } border-l-4 ${isActive ? 'border-blue-500' : 'border-transparent'}`}
                 >
                   <item.icon className="h-4 w-4 inline mr-2" />
                   {item.name}
@@ -170,10 +173,10 @@ const Navbar = () => {
               </div>
               <div className="ml-3">
                 <div className="text-base font-medium text-gray-800 dark:text-white">
-                  {user?.full_name || user?.username}
+                  {user?.full_name || user?.username || 'User'}
                 </div>
                 <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                  {user?.email}
+                  {user?.email || 'user@example.com'}
                 </div>
               </div>
             </div>

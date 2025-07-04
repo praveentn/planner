@@ -1,44 +1,36 @@
 // frontend/src/pages/Dashboard.jsx
 import React, { useState, useEffect } from 'react'
 import { useAuth } from '../contexts/AuthContext'
-import { settingsAPI } from '../services/api'
-import { wsService } from '../services/api'
 import Navbar from '../components/Navbar'
 import TasksWidget from '../components/widgets/TasksWidget'
 import TimerWidget from '../components/widgets/TimerWidget'
 import AIChat from '../components/widgets/AIChat'
 import StatsWidget from '../components/widgets/StatsWidget'
-import QuickActionsWidget from '../components/widgets/QuickActionsWidget.jsx'
+import QuickActionsWidget from '../components/widgets/QuickActionsWidget'
 import LoadingSpinner from '../components/LoadingSpinner'
 import toast from 'react-hot-toast'
 
 const Dashboard = () => {
   const { user } = useAuth()
-  const [enabledWidgets, setEnabledWidgets] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [enabledWidgets, setEnabledWidgets] = useState(['tasks', 'timer', 'ai_chat', 'stats', 'quick_actions'])
+  const [loading, setLoading] = useState(false) // Changed to false for immediate render
 
   useEffect(() => {
     loadEnabledWidgets()
-    
-    // Connect to WebSocket
-    if (user?.id) {
-      wsService.connect(user.id)
-    }
-
-    // Cleanup WebSocket on unmount
-    return () => {
-      wsService.disconnect()
-    }
   }, [user?.id])
 
   const loadEnabledWidgets = async () => {
     try {
+      // Try to load from API, but don't block UI if it fails
       const response = await settingsAPI.getEnabledWidgets()
       setEnabledWidgets(response.data.enabled_widgets || [])
+      
+      // For now, use default widgets
+      // setEnabledWidgets(['tasks', 'timer', 'ai_chat', 'stats', 'quick_actions'])
     } catch (error) {
-      console.error('Error loading enabled widgets:', error)
+      console.log('Settings API not available, using defaults')
       // Default widgets if settings can't be loaded
-      setEnabledWidgets(['tasks', 'timer', 'ai_chat', 'stats'])
+      setEnabledWidgets(['tasks', 'timer', 'ai_chat', 'stats', 'quick_actions'])
     } finally {
       setLoading(false)
     }
@@ -46,6 +38,25 @@ const Dashboard = () => {
 
   const isWidgetEnabled = (widgetName) => {
     return enabledWidgets.includes(widgetName)
+  }
+
+  const renderWidget = (widgetName) => {
+    if (!isWidgetEnabled(widgetName)) return null
+
+    switch (widgetName) {
+      case 'tasks':
+        return <TasksWidget key="tasks" />
+      case 'timer':
+        return <TimerWidget key="timer" />
+      case 'ai_chat':
+        return <AIChat key="ai_chat" />
+      case 'stats':
+        return <StatsWidget key="stats" />
+      case 'quick_actions':
+        return <QuickActionsWidget key="quick_actions" />
+      default:
+        return null
+    }
   }
 
   if (loading) {
@@ -60,60 +71,52 @@ const Dashboard = () => {
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-            Welcome back, {user?.full_name || user?.username}! 👋
+            Welcome back, {user?.full_name || user?.username || 'User'}! 👋
           </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
             Here's what's happening with your productivity today.
           </p>
         </div>
 
-        {/* Widget Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Tasks and Quick Actions */}
-          <div className="lg:col-span-2 space-y-6">
-            {isWidgetEnabled('tasks') && (
-              <TasksWidget />
-            )}
-            
-            {isWidgetEnabled('quick_actions') && (
-              <QuickActionsWidget />
-            )}
+        {/* Widgets Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Quick Actions Widget */}
+          {renderWidget('quick_actions')}
+          
+          {/* Timer Widget */}
+          {renderWidget('timer')}
+          
+          {/* Stats Widget */}
+          {renderWidget('stats')}
+          
+          {/* Tasks Widget */}
+          <div className="md:col-span-2 lg:col-span-1">
+            {renderWidget('tasks')}
           </div>
-
-          {/* Right Column - Timer, AI Chat, Stats */}
-          <div className="space-y-6">
-            {isWidgetEnabled('timer') && (
-              <TimerWidget />
-            )}
-            
-            {isWidgetEnabled('ai_chat') && (
-              <AIChat />
-            )}
-            
-            {isWidgetEnabled('stats') && (
-              <StatsWidget />
-            )}
+          
+          {/* AI Chat Widget */}
+          <div className="md:col-span-2 lg:col-span-2">
+            {renderWidget('ai_chat')}
           </div>
         </div>
 
-        {/* If no widgets are enabled */}
+        {/* If no widgets are enabled, show a message */}
         {enabledWidgets.length === 0 && (
           <div className="text-center py-12">
-            <div className="mx-auto h-24 w-24 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <span className="text-gray-400 text-2xl">🎯</span>
+            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                No widgets enabled
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                Go to settings to enable widgets for your dashboard.
+              </p>
+              <button
+                onClick={() => window.location.href = '/settings'}
+                className="btn-primary"
+              >
+                Go to Settings
+              </button>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-              No widgets enabled
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Enable some widgets in your settings to get started with productivity tracking.
-            </p>
-            <button
-              onClick={() => window.location.href = '/settings'}
-              className="btn-primary"
-            >
-              Go to Settings
-            </button>
           </div>
         )}
       </div>
